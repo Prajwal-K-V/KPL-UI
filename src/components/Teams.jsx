@@ -9,6 +9,7 @@ import TeamGrid from './TeamGrid';
 import TeamForm from './TeamForm';
 import TeamHierarchy from './TeamHierarchy';
 import GlobalPlayers from './GlobalPlayers';
+import { exportAllTeamsToPDF } from '../utils/pdfExport';
 
 function Teams({ onSuccess, onError }) {
   const [teams, setTeams] = useState([]);
@@ -118,6 +119,15 @@ function Teams({ onSuccess, onError }) {
     setEditingTeam(null);
   };
 
+  const handleExportTeams = () => {
+    if (teams.length === 0) {
+      if (onError) onError('No teams to export');
+      return;
+    }
+    exportAllTeamsToPDF(teams);
+    if (onSuccess) onSuccess('Teams overview exported to PDF successfully!');
+  };
+
   /**
    * Handle back from team hierarchy
    */
@@ -181,15 +191,28 @@ function Teams({ onSuccess, onError }) {
                 Manage your teams and players
               </p>
             </div>
-            <button
-              onClick={handleAddNew}
-              className="mt-4 sm:mt-0 inline-flex items-center px-6 py-3 border border-transparent rounded-lg shadow-lg text-sm font-medium text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 transform hover:scale-105"
-            >
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-              Add New Team
-            </button>
+            <div className="flex space-x-3 mt-4 sm:mt-0">
+              <button
+                onClick={handleExportTeams}
+                disabled={teams.length === 0}
+                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Export to PDF"
+              >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                </svg>
+                Export PDF
+              </button>
+              <button
+                onClick={handleAddNew}
+                className="inline-flex items-center px-6 py-3 border border-transparent rounded-lg shadow-lg text-sm font-medium text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 transform hover:scale-105"
+              >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Add New Team
+              </button>
+            </div>
           </div>
 
       {/* Form Modal */}

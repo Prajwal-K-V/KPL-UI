@@ -6,6 +6,7 @@
 import { useState, useEffect } from 'react';
 import { teamsAPI, playersAPI } from '../services/api';
 import PlayerForm from './PlayerForm';
+import { exportTeamPlayersToPDF } from '../utils/pdfExport';
 
 function TeamHierarchy({ teamId, onBack, onSuccess }) {
   const [team, setTeam] = useState(null);
@@ -124,6 +125,12 @@ function TeamHierarchy({ teamId, onBack, onSuccess }) {
     }
   };
 
+  const handleExportPDF = () => {
+    if (!team) return;
+    exportTeamPlayersToPDF(team, players);
+    if (onSuccess) onSuccess('Team roster exported to PDF successfully!');
+  };
+
   // Group players by position
   const playersByPosition = players.reduce((acc, player) => {
     const position = player.position || 'Unassigned';
@@ -196,7 +203,18 @@ function TeamHierarchy({ teamId, onBack, onSuccess }) {
               </div>
             </div>
 
-            <div className="flex space-x-2">
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={handleExportPDF}
+                disabled={players.length === 0}
+                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Export to PDF"
+              >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                </svg>
+                Export PDF
+              </button>
               <button
                 onClick={handleAddPlayer}
                 className="inline-flex items-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200"

@@ -1,13 +1,15 @@
 /**
  * NewDashboard Component
- * Main dashboard with team management
+ * Main dashboard with team management and all players view
  */
 
 import { useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import Teams from './Teams';
+import Dashboard from './Dashboard';
 
 function NewDashboard({ user, onLogout }) {
+  const [activeView, setActiveView] = useState('players'); // 'players' or 'teams'
   const [successMessage, setSuccessMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -37,6 +39,38 @@ function NewDashboard({ user, onLogout }) {
       <Navbar user={user} onLogout={onLogout} />
 
       <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        {/* Navigation Tabs */}
+        <div className="mb-6 bg-white rounded-lg shadow-md p-2">
+          <nav className="flex space-x-2">
+            <button
+              onClick={() => setActiveView('players')}
+              className={`flex-1 py-3 px-6 rounded-lg font-medium text-sm transition-all duration-200 ${
+                activeView === 'players'
+                  ? 'bg-primary-600 text-white shadow-md'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              <svg className="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+              All Players
+            </button>
+            <button
+              onClick={() => setActiveView('teams')}
+              className={`flex-1 py-3 px-6 rounded-lg font-medium text-sm transition-all duration-200 ${
+                activeView === 'teams'
+                  ? 'bg-primary-600 text-white shadow-md'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              <svg className="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              Teams & Groups
+            </button>
+          </nav>
+        </div>
+
         {/* Messages */}
         {error && (
           <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-lg shadow-md animate-fadeIn">
@@ -61,7 +95,19 @@ function NewDashboard({ user, onLogout }) {
         )}
 
         {/* Main Content */}
-        <Teams onSuccess={handleSuccess} onError={handleError} />
+        {activeView === 'players' ? (
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <Dashboard 
+              user={user} 
+              onLogout={onLogout}
+              onSuccess={handleSuccess}
+              onError={handleError}
+              hideNavbar={true}
+            />
+          </div>
+        ) : (
+          <Teams onSuccess={handleSuccess} onError={handleError} />
+        )}
       </div>
     </div>
   );
